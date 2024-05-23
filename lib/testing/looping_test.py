@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+import sys
+import os
+
+# Adjust the path to ensure the parent directory is included
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from looping import happy_new_year, square_integers, fizzbuzz
 
 import io
@@ -16,21 +22,23 @@ class TestHappyNewYear:
         sys.stdout = sys.__stdout__
         answer = captured_out.getvalue()
         
-        #answer.split(\n) produces a list that ends in ''
+        # answer.split(\n) produces a list that ends in ''
         answer_list = answer.split('\n')
-        #second to last value should be the HNY string
+        # second to last value should be the HNY string
         assert answer_list[-2] == "Happy New Year!", "Your final line does not match 'Happy New Year!', check spelling/capitalization!"
-        digit_strings = [str(i) for i in range(1,11)]
+        digit_strings = [str(i) for i in range(1, 11)]
         remaining_digits = [i for i in digit_strings if i not in answer_list] 
-        assert remaining_digits == [], f"You didn't print all digits 1-10, missing {', '.join(remaining_digits)}"
+        assert remaining_digits == [], "You didn't print all digits 1-10, missing {}".format(', '.join(remaining_digits))
+
 
 class TestSquareIntegers:
     '''square_integers() in looping.py'''
 
     def test_square_integers(self):
         '''returns squared ints for [1, 2, 3, 4, 5] and [-1, -2, -3, -4, -5]'''
-        assert(square_integers([1, 2, 3, 4, 5]) == [1, 4, 9, 16, 25])
-        assert(square_integers([-1, -2, -3, -4, -5]) == [1, 4, 9, 16, 25])
+        assert square_integers([1, 2, 3, 4, 5]) == [1, 4, 9, 16, 25]
+        assert square_integers([-1, -2, -3, -4, -5]) == [1, 4, 9, 16, 25]
+
 
 class TestFizzBuzz:
     '''fizzbuzz() in looping.py'''
@@ -47,12 +55,27 @@ class TestFizzBuzz:
         assert "Buzz" in answer, "The string 'Buzz' not found in your answer, check spelling/capitalization!"
         i = 1
         for line in answer.split('\n'):
-            if(line): #answer.split(\n) produces a list that ends in ''
-                if i % 15 == 0: assert line == "FizzBuzz", f"Should have printed 'Buzz' when number is {i}, got {line} instead"
-                elif i % 3 == 0: assert line == "Fizz", f"Should have printed 'Fizz' when number is {i}, got {line} instead"
-                elif i % 5 == 0: assert line == "Buzz", f"Should have printed 'Buzz' when number is {i}, got {line} instead"
-                else: assert str(i) == line, f"Should have printed {i}, got {line} instead"
+            if line:  # answer.split(\n) produces a list that ends in ''
+                if i % 15 == 0:
+                    assert line == "FizzBuzz", "Should have printed 'FizzBuzz' when number is {}, got {} instead".format(i, line)
+                elif i % 3 == 0:
+                    assert line == "Fizz", "Should have printed 'Fizz' when number is {}, got {} instead".format(i, line)
+                elif i % 5 == 0:
+                    assert line == "Buzz", "Should have printed 'Buzz' when number is {}, got {} instead".format(i, line)
+                else:
+                    assert str(i) == line, "Should have printed '{}', got {} instead".format(i, line)
                 i += 1
         
-        i = i - 1
-        assert i == 100, f"Only looped {i} times, should have looped 100 times. Check your loop condition!"    
+        i -= 1
+        assert i == 100, "Only looped {} times, should have looped 100 times. Check your loop condition!".format(i)
+
+# To run the tests manually
+if __name__ == "__main__":
+    test = TestHappyNewYear()
+    test.test_prints_10_to_1_hny()
+    
+    test = TestSquareIntegers()
+    test.test_square_integers()
+    
+    test = TestFizzBuzz()
+    test.test_prints_1_to_100_fizzbuzz()
